@@ -16,17 +16,18 @@
 
 ## OpenCode 加载
 
-本次未修改全局配置。手动将各技能目录复制到项目 `.opencode/skills/` 或全局 `~/.config/opencode/skills/`，或者在现有配置的skills.paths中追加本目录（保留其他配置）：
+技能发现和技能调用是两个步骤。当前机器全局配置已注册本目录，并通过instructions加载[任务路由规则](skill-loading.md)。其他机器可将各技能目录复制到项目 `.opencode/skills/` 或全局 `~/.config/opencode/skills/`，或在现有配置追加以下路径（保留其他配置和已有instructions）：
 
 ```json
 {
+  "instructions": ["/home/tweaks/skills/rust/skill-loading.md"],
   "skills": {
     "paths": ["/home/tweaks/skills/rust"]
   }
 }
 ```
 
-复制部署时只需七个技能目录；tests/docs不是运行必需。修改加载配置或安装技能后退出并重启OpenCode，再检查技能列表。
+复制部署时需要七个技能目录；若使用路由规则，还需复制skill-loading.md并将instructions改为实际绝对路径。tests/docs不是运行必需。修改加载配置或安装技能后退出并重启OpenCode，再检查技能列表及实际skill调用；仅列出技能不证明已调用。
 
 ## 本地检查
 
