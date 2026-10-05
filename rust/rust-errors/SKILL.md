@@ -18,6 +18,12 @@ description: Use when Rust APIs must distinguish missing values from failures, p
 5. 复用已安装错误库和现有错误类型。库需要调用方匹配时用明确枚举；应用边界可采用现有统一错误类型。只有调用方需要标准Error接口时实现 Display/Error/source；不用为了一个错误加框架。
 6. 测试有效、缺失、损坏、范围边界和外部失败；让调用方决定退出、重试或展示。`unwrap/expect` 适合测试或已证明的不变量；启动失败即退出必须是明确策略，不能冒充可恢复错误接口。
 
+### 按 Reference 核对控制流
+
+- Result的?在Ok时取值，Err时提前返回并转换错误；Option的?在None时提前返回None。位于闭包/async块时作用于该闭包/块的返回边界，不是任意外层函数；返回类型不兼容就显式match/转换，不把?当捕获机制。
+- 不给stable项目实现自定义Try/FromResidual来扩展?；这些trait的稳定性单独核对，不由最新Reference中展示的语义推断所有历史版本均支持。
+- panic策略区分unwind与abort：unwind会展开Rust栈并执行沿途活跃值的析构，abort不提供该清理或恢复过程；catch_unwind仅用于其API允许的展开情形，不能捕获abort，不能替代输入错误Result。析构不是跨所有终止路径的资源持久化保证。
+
 ## 快速参考
 
 | 语义 | 形式 |

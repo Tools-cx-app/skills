@@ -18,6 +18,8 @@ description: Use when verifying Rust changes, interpreting rustfmt or Clippy dia
 5. 先检查，再按任务需要自动修复；不默认 --fix/--allow-dirty，不混入已有用户修改。`cargo clippy --fix`隐含`--all-targets`，先确认修复目标和合法features。修复后审阅diff，核实所有权、错误、平台和features语义，重新执行受影响检查。clippy-driver用于lint，不是生产rustc替代品，产物可能不按预期优化。
 6. 总结命令、工具链、包/features/target、相关测试数量和结果；单列未验证范围。没有执行则说建议命令，不说通过。
 
+代码改写另核对匹配版本/edition的Reference：move/绑定模式、临时值及守卫析构、控制流边界、整数溢出和条件编译。不要用`if cfg!(...)`隐藏不存在的API；cfg!不是移除代码。语言语义、API合约和lint风格建议分开；Reference不规定优化策略，不用它证明迭代器更快或release溢出一定环绕。
+
 ## 快速参考
 
 | 检查 | 能提供的证据 | 不能推出 |

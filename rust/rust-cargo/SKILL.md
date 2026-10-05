@@ -18,6 +18,8 @@ description: Use when Rust projects have dependency or feature surprises, worksp
 5. 先查询再修改：metadata/tree识别包与实际feature来源；metadata --no-deps只看包声明，不证明完整图；lock不记录最终features，完整metadata也不能替代所有构建上下文。tree缺失于旧Cargo时读取manifest/lock并用已有工具，不要求安装最新Cargo。严格不联网/不改lock的诊断用可用的frozen选项，缓存不全时报失败，不自动回退联网。查询可能取锁或写缓存，不能保证整个文件系统只读。
 6. 选择合法feature矩阵：默认、no-default、每个backend和必要组合，以及受影响成员单独/联合构建；互斥feature不只用all-features，需要拒绝的非法组合作为预期失败验证。仅构建的选择不等于测试所有目标平台。依赖调整后审阅manifest/lock差异，再执行项目MSRV与CI检查。
 
+条件编译按Reference区分：`#[cfg(...)]`在条件不满足时移除相应代码；`cfg!(...)`只展开为布尔字面量，普通if中未执行分支仍需通过名称解析/类型检查。隔离缺失API或平台代码用适当cfg属性，不用if cfg!伪装编译期移除。`feature = "..."`是Cargo传入cfg的约定；resolver/依赖联合仍查Cargo Book。配置表达式和新宏需匹配实际Rust版本，不照搬最新stable新增语法。
+
 ## 快速参考
 
 | 选项/文件 | 合约与边界 |

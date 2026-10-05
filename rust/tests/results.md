@@ -1,5 +1,13 @@
 # 验证记录
 
+## stable Reference代码规则更新
+
+- 2026-10-05读取用户指定Reference入口及expressions、patterns、destructors、operator-expr、loop-expr、conditional-compilation、interior-mutability、panic相关内容；查询式返回缺内容的页面改为读取正文，避免从“未抽取到”推断规则不存在。
+- 修改前定位任务 `ses_ef615d17fffe06hG3I2WvkqWgO` 识别原技能缺少部分移动/Drop、临时值/edition、?闭包边界、for协议、cfg!及溢出例外，提取运算符正文证据。
+- 修改后任务 `ses_ef6110014ffeSMPT79H7GdKQDB` 正确应用六项代码规则及来源边界；据其复核收紧Copy/按值表述、部分移动重新初始化条件、数组2015/2018及优化可观察行为约束。
+- Reference用于语言语义，不把标准库容器/API、Cargo依赖或用户crates-first规则改写为其风格建议。latest stable不替代历史工具链/edition核验。
+- 本轮未改变示例逻辑，使用既有四个完整Rust示例检查；未实测所有版本/平台或每个文字规则的编译反例。
+
 ## stable Clippy 文档更新
 
 目录已由用户重命名：技能包现为 `/home/tweaks/skills/rust`，编译器源码为 `/home/tweaks/skills/rust-lang`；早期记录中的distilled路径为历史执行位置。

@@ -19,13 +19,15 @@ description: Use when Rust answers require authoritative API or language documen
 6. 无网络优先读取已安装目标工具链文档、本地已有target/doc或缓存的精确版本源码；已有文档先核实是否陈旧及生成配置，不存在则明确“未核实”。需要生成文档时先确认选项和项目features；cargo doc会构建文档、执行构建脚本并可能联网，不是纯查询；需限制Cargo联网/不改lock且支持时用frozen，不自动回退。frozen不是只读模式或网络沙箱，不能约束build.rs自行联网。不要为查询默认安装/升级工具链或开启全部features。
 7. 给出来源、版本/配置、合约要点、结论与未确定项。可用项目工具链编译最小调用补验证；不要声称未访问页面已查证或未运行编译已通过。查询不足时仍可解释方法，但结论保持条件性。
 
+语言查询以 `https://doc.rust-lang.org/stable/reference/index.html` 为入口，历史项目用 `https://doc.rust-lang.org/<rust-version>/reference/`。主文与示例默认最新stable edition，必须读取edition差异块；stable不是固定版本。Reference规则标识符及锚点可能变化，失效时按章节/关键字重新定位。它不代替std API、Cargo/rustc工具文档，也不列举具体优化策略；优化仍须保持语言规定的可观察行为。写成“Reference推荐某容器/依赖/性能技巧”前先核实来源范围。
+
 ## 快速来源表
 
 | 问题 | 首选 |
 | --- | --- |
 | std/core/alloc类型、方法、trait | 目标Rust版本API rustdoc |
 | 第三方crate API/features | 精确版本docs.rs、发布源码/manifest |
-| 语言语义/语法 | Rust Reference |
+| 语言语义/语法 | stable Reference为入口，匹配Rust版本并读edition差异块 |
 | 教学解释 | The Rust Book |
 | edition行为差异 | Edition Guide |
 | manifest/resolver/命令 | 对应Cargo Book、实际cargo help |
@@ -52,4 +54,4 @@ description: Use when Rust answers require authoritative API or language documen
 
 ## 来源
 
-[rustdoc、人类指南与docs.rs依据](references/sources.md)。其他五项技能只在需要核实规则/API时使用本流程，不需要无条件互相加载。
+[rustdoc、人类指南与docs.rs依据](references/sources.md)。其他技能只在需要核实规则/API时使用本流程，不需要无条件互相加载。

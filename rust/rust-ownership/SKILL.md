@@ -17,12 +17,19 @@ description: Use when Rust code has move or borrow errors, unclear lifetimes, un
 4. 跨线程检查整个捕获值的 `Send`/`Sync`；按值转交 T 需 Send，共享 &T 需 Sync；Arc<T> 的 Send/Sync 要求 T 同时 Send+Sync。RefCell<T> 可在 T: Send 时独占转交，但不是 Sync。遇到错误沿内部字段追踪，不能仅替换外层智能指针。
 5. 用真实调用方编译验证；比较修改前后所有权、锁持有时间和错误处理。API 版本不确定时使用 rust-docs 查询。
 
+### 按 Reference 排查语言规则
+
+- 先区分位置表达式与值上下文：Copy类型按值使用会复制，否则合法位置可能被移动；不是所有读取都会clone。部分移动后可使用未移动字段，移出字段未重新初始化前不能整体使用原值；实现Drop的类型不能直接移出非Copy字段，复制Copy字段或留下替代值的取出另按API处理。
+- 解构/匹配先确认绑定模式：按值可能move/copy，ref/ref mut绑定引用；mut是绑定可变性，不等于自动取得&mut。匹配引用时考虑match ergonomics；edition2024收紧隐式引用模式下显式mut/ref及引用模式的写法，不跨edition机械改写。
+- 借用的有效使用范围与析构作用域分别分析。局部变量通常在所属drop scope退出时析构；临时值有独立作用域和延长规则，不能声称都在语句末尾析构。edition2024的if-let/块尾临时值作用域与旧edition不同；锁守卫/RefCell借用守卫遇到阻塞或借用问题时重点核对实际释放点。
+- 共享引用通常不允许改变指向内容；内部可变性经UnsafeCell基础上的安全抽象实现，优先用Cell/RefCell/锁/原子API。内部可变性不取消&mut独占要求，不以unsafe绕过别名规则。
+
 ## 快速选择
 
 | 需求 | 起点 | 条件 |
 | --- | --- | --- |
 | 当前调用只读/独占修改 | `&T` / `&mut T` | 数据活得足够久；内部可变性另有约束 |
-| 单一所有者接管 | 按值移动 `T` | 移动不是深拷贝 |
+| 按值接收 | Copy类型复制，否则移动 `T` | 移动不是深拷贝，也不调用Clone |
 | 递归类型或独占堆所有权 | `Box<T>` | 不提供共享所有权 |
 | 单线程共享所有权 | `Rc<T>` | `Rc` 非 Send/Sync；修改可按需求用 RefCell |
 | 跨线程共享只读所有权 | `Arc<T>` | 内部 T 必须满足相应 Send/Sync 约束 |
@@ -64,4 +71,4 @@ fn main() {
 
 ## 来源
 
-[公开合约、源码与版本依据](references/sources.md)。
+[公开合约、源码与版本依据](references/sources.md)。语言行为以匹配版本/edition的stable Reference为依据；智能指针和线程API仍查标准库合约。

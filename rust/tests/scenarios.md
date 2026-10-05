@@ -2,6 +2,10 @@
 
 新增rust-crates-first为行为优先技能，见末节；其压力场景另外验证规则与用户例外。
 
+## stable Reference代码规则复测
+
+读取相关技能后分别判断：Copy/非Copy按值与clone，部分移动及Drop字段，mut与ref/match ergonomics，临时值/锁守卫是否总语句末释放及edition2024差异；闭包中?返回边界与stable自定义Try；panic=abort是否catch_unwind并执行析构；for values/&values/&mut values是否消耗容器、表达式是否每轮求值、是否保证迭代器更快；release算术是否必然环绕、MIN/-1例外；if cfg!(feature)是否隐藏缺失API；Reference是否是标准库/Cargo/优化/风格规范，历史版本与edition如何匹配。通过要求解释来源边界，不能把最新stable语法强推旧版。
+
 每组给测试子代理：只解释，不编辑文件；作出选择并说明依据。第一轮不得读取当前rust技能目录或相应技能；复测读指定技能后回答原输入。版本信息不足时需指出影响，不能臆定 stable/MSRV。人工评分检验语义，不以关键词命中代替理解。
 
 ## rust-ownership

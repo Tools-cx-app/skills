@@ -13,10 +13,16 @@ description: Use when Rust code needs collection selection, ordered or keyed out
 
 1. 核实项目 rustc/cargo、edition、MSRV 和数据来源；不默认 nightly 或新增集合依赖。新方法核对稳定版本，旧版本可用 match、entry 和显式循环。
 2. 确认输出顺序、重复键处理、更新频率、是否仅末尾追加。选下表的标准容器；现有容器加一次排序已满足需求时不强制重写。
-3. 只读用 iter/借用，原地修改用 iter_mut，接管元素用 into_iter；方法接收者决定移动还是借用。数组按值IntoIterator要求Rust≥1.53；edition2018的数组.into_iter()保持借用兼容，按值用IntoIterator::into_iter(array)，借用明确用array.iter()。不同版本/edition不套用Vec规则。
+3. 只读用 iter/借用，原地修改用 iter_mut，接管元素用 into_iter；方法接收者决定移动还是借用。数组按值IntoIterator要求Rust≥1.53；edition2015/2018的数组.into_iter()保持借用兼容，按值用IntoIterator::into_iter(array)，借用明确用array.iter()。不同版本/edition不套用Vec规则。
 4. Map更新用 entry 避免查找后再插入；持久存储键决定借用键是否活得足够久。无界流计数明确溢出策略，checked_add返回错误优于默默环绕；已知内存内输入的计数可利用总长度上界。无界流另定义标签基数/字节预算和快照或终止边界；检查整数溢出不解决内存无界。
 5. 容量是预留空间，不是len：核实问的是 Vec 还是 HashMap，再查该类型合约。Vec::with_capacity(n) 至少n，非恰好n；零大小类型例外、增长倍数和分配器行为不能硬编码。未知长度先用new，不从不可信输入无界预分配。
 6. 性能优化先测实际负载与目标构建；比较分配、拷贝、哈希/比较成本。循环和迭代器没有普遍快慢保证。需要可恢复分配失败时按容器查询项目版本的try_reserve等API；Vec的try_reserve不能用于BTreeMap，不假定所有分配都返回Result。
+
+### 按 Reference 核对循环与整数语义
+
+- for将循环表达式经IntoIterator::into_iter转换，再调用Iterator::next；转换表达式求值一次。`for x in values`对Vec按值接管，`&values`借用、`&mut values`独占借用；循环模式影响元素move/copy/ref。迭代协议不是额外分配或更快机器码的保证。
+- 普通整数+/-/*等的溢出检查依构建设置，不承诺“release必环绕”。需要可预期语义用对应checked/wrapping/saturating API并核对版本；有符号MIN除以或取余-1的检查即使关闭overflow-checks仍存在，除零也不能靠关闭检查解决。
+- Reference定义语言可观察行为，不规定优化策略；Vec容量、HashMap顺序等仍是具体标准库API合约。
 
 ## 快速选择
 

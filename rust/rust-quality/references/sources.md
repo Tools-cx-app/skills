@@ -12,3 +12,5 @@
 检查层次、任务范围控制与diff审阅是从这些工具合约归纳的条件性工作流，不新增上游贡献政策。当前推荐的warning配置可能随Cargo版本变化，优先项目既有配置。
 
 本次stable usage读取的“Elevating warning to errors”段原文：`Since Cargo 1.97, the recommended way to do this is by using the build.warnings config option.` 随后列出 `CARGO_BUILD_WARNINGS=deny cargo clippy`，旧版替代为 `cargo clippy -- -Dwarnings`。这记录页面在读取时的推荐门槛，不推断更早版本的稳定化历史，也不替代实际Cargo支持核验。
+
+[stable Reference](https://doc.rust-lang.org/stable/reference/index.html)及[条件编译](https://doc.rust-lang.org/stable/reference/conditional-compilation.html)、[析构](https://doc.rust-lang.org/stable/reference/destructors.html)、[运算符](https://doc.rust-lang.org/stable/reference/expressions/operator-expr.html)于2026-10-05用于语言改写规则核对；Reference不是Clippy风格策略或优化保证。版本/edition差异必须单独核实。

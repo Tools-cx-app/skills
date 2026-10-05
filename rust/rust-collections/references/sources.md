@@ -9,3 +9,5 @@
 - [Iterator](https://doc.rust-lang.org/std/iter/trait.Iterator.html)：适配器与消耗方法；[数组IntoIterator的edition差异](https://doc.rust-lang.org/edition-guide/rust-2021/IntoIterator-for-arrays.html)。
 
 “先用标准容器、性能先测量”是条件性建议；具体版本下的分配次数、向量增长倍数和哈希桶布局是实现细节。示例usize上界来自输入为已存在切片的前提，不推广到累计多个批次或无界流。
+
+2026-10-05读取[stable Reference循环](https://doc.rust-lang.org/stable/reference/expressions/loop-expr.html)：for/IntoIterator/Iterator展开与不可反驳模式；[运算符](https://doc.rust-lang.org/stable/reference/expressions/operator-expr.html)：整数溢出与检查例外；[介绍](https://doc.rust-lang.org/stable/reference/index.html)：可观察行为及优化范围。语言协议不保证性能或容器容量，后者须查对应API。

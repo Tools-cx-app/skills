@@ -13,3 +13,5 @@
 锁选择和接口优先借用属于条件性开发建议；Rc/Arc 性能差异不能替代对实际工作负载的测量。标准库内部布局和具体原子内存序仅用于理解实现，不构成应用代码必须遵循的实现模板。
 
 补充公开合约：[spawn](https://doc.rust-lang.org/std/thread/fn.spawn.html)、[RefCell](https://doc.rust-lang.org/std/cell/struct.RefCell.html)、[Mutex](https://doc.rust-lang.org/std/sync/struct.Mutex.html)、[Clone](https://doc.rust-lang.org/std/clone/trait.Clone.html)。查询目标版本的方法见 rust-docs 技能；该技能不可用时直接访问目标版本官方 API 页面并核对稳定版本。
+
+2026-10-05按用户指定stable Reference核对：[表达式](https://doc.rust-lang.org/stable/reference/expressions.html)的位置/值上下文及move/copy；[模式](https://doc.rust-lang.org/stable/reference/patterns.html)的绑定模式/edition2024；[析构](https://doc.rust-lang.org/stable/reference/destructors.html)的drop scope与临时值延长；[内部可变性](https://doc.rust-lang.org/stable/reference/interior-mutability.html)的UnsafeCell边界。以上为语言规则；接口选型仍是条件建议。stable文档随版本变化，历史项目须换版本路径。

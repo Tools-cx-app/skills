@@ -11,3 +11,5 @@
 - [ops/cargo_compile/mod.rs](https://github.com/rust-lang/cargo/blob/bb2126cffae48394a37db8728dc50a17bbfe54d4/src/ops/cargo_compile/mod.rs)：依赖图、UnitGraph、BuildContext/BuildRunner调度，仅源码定位。
 
 feature矩阵和优先只读诊断是条件性开发建议。解析、编译、测试、联网和缓存写入边界必须按具体命令区分。
+
+[stable Reference条件编译](https://doc.rust-lang.org/stable/reference/conditional-compilation.html)于2026-10-05读取：cfg属性条件移除、cfg!布尔展开、feature键为Cargo约定。该文不定义Cargo resolver；新增条件语法/宏不自动适用旧Rust。
