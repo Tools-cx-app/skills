@@ -2,7 +2,7 @@
 
 新增rust-crates-first为行为优先技能，见末节；其压力场景另外验证规则与用户例外。
 
-每组给测试子代理：只解释，不编辑文件；作出选择并说明依据。第一轮不得读取 distilled 或相应技能；复测读指定技能后回答原输入。版本信息不足时需指出影响，不能臆定 stable/MSRV。人工评分检验语义，不以关键词命中代替理解。
+每组给测试子代理：只解释，不编辑文件；作出选择并说明依据。第一轮不得读取当前rust技能目录或相应技能；复测读指定技能后回答原输入。版本信息不足时需指出影响，不能臆定 stable/MSRV。人工评分检验语义，不以关键词命中代替理解。
 
 ## rust-ownership
 
@@ -35,6 +35,8 @@
 通过：fmt/check 不证明运行行为；针对受影响行为测试；Clippy 与 rust-version/MSRV；all-features 有前提；不无条件 allow-dirty/自动升级；修复后审阅diff重测；不强制 unrelated lint 清零。反例：纯格式变更不新增行为测试。
 
 ## rust-docs
+
+Clippy补充场景：all是否所有lint、类别默认等级、restriction整组、clippy.toml能否设等级/搜索路径、-p与 -- --no-deps、fix隐含all-targets、driver非生产编译、MSRV仅部分lint、不稳定属性和CI新旧选项。通过条件以2026-10-05已读取的stable入口/usage/configuration为依据，不能把master或新配置强推旧工具链。
 
 输入：项目 MSRV=1.70，edition=2021，tokio 锁定1.28.2且default-features=false/features=[rt]。同事找到 latest docs 的 tokio::net 和最新标准库API就建议照用。查询一个API时应该查哪里、版本怎么匹配、打不开网页怎么回答？同时问Rust语言规则和Cargo features；不要真实查询 tokio 网络，说明方法即可。
 

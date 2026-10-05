@@ -1,5 +1,14 @@
 # 验证记录
 
+## stable Clippy 文档更新
+
+目录已由用户重命名：技能包现为 `/home/tweaks/skills/rust`，编译器源码为 `/home/tweaks/skills/rust-lang`；早期记录中的distilled路径为历史执行位置。
+
+- 已读取用户指定stable入口及usage/configuration，修改rust-quality的分类、默认等级、配置搜索、等级与参数区分、MSRV、fix和依赖范围；rust-docs增加Clippy版本查询入口，README修复加载路径。
+- 修改前测试 `ses_ef6206097ffeOwxXWbUZplc720` 识别原技能未覆盖all边界、九类等级、配置搜寻、no-deps参数位置、fix隐含范围及CI旧新规则。
+- 修改后测试 `ses_ef61d0757ffehgb7k8d8XlsXtH` 正确应用上述规则，区分1.70旧方式与新配置、master与安装版，未声称执行检查。源页面已由主会话实际读取；补录warning策略原句用于追溯。
+- 当前会话的技能加载可能仍来自启动时旧内容；磁盘内容检查通过不表示运行会话已重新加载。安装配置需指向新目录并重启OpenCode。
+
 ## 环境与方法
 
 - rustc 1.101.0-nightly (0abfedbc7 2026-10-02)

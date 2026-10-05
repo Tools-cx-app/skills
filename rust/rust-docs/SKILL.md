@@ -29,6 +29,7 @@ description: Use when Rust answers require authoritative API or language documen
 | 教学解释 | The Rust Book |
 | edition行为差异 | Edition Guide |
 | manifest/resolver/命令 | 对应Cargo Book、实际cargo help |
+| Clippy类别、配置、lint建议 | stable Clippy Book为入口，再匹配安装版；入口链接的master清单不证明本地版本支持 |
 | nightly/unstable | 对应版本Unstable Book/跟踪issue，不默认可用 |
 
 ## 最小示例

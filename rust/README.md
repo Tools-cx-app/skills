@@ -21,7 +21,7 @@
 ```json
 {
   "skills": {
-    "paths": ["/home/tweaks/skills/distilled"]
+    "paths": ["/home/tweaks/skills/rust"]
   }
 }
 ```
