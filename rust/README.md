@@ -1,43 +1,45 @@
-# Rust 日常开发 skills
+# Rust Book Skills
 
-七项中文技能，按场景加载。先读取[加载入口](skill-loading.md)，再按当前工作阶段调用具体技能。rustc/cargo版本通用：使用项目实际工具链、edition、MSRV和依赖配置；不默认nightly，不要求升级。新API/选项标明适用条件；源码修订只追溯依据，不是版本要求。
+12项中文技能以《The Rust Programming Language》为学习主线，按具体工作加载。先按[加载入口](skill-loading.md)识别任务阶段，再调用对应技能。Book是教学来源；语言精确定义、API、Cargo和lint分别核对Reference、rustdoc、Cargo Book和Clippy文档。
 
-| 技能 | 触发场景 |
-| --- | --- |
-| [rust-ownership](rust-ownership/SKILL.md) | move/borrow、生命周期、clone、智能指针和线程共享 |
-| [rust-errors](rust-errors/SKILL.md) | Option/Result、错误传播、上下文和panic边界 |
-| [rust-collections](rust-collections/SKILL.md) | 集合选择、顺序、计数、迭代、容量和分配 |
-| [rust-cargo](rust-cargo/SKILL.md) | 依赖、features、workspace/resolver、lock与构建 |
-| [rust-quality](rust-quality/SKILL.md) | fmt、Clippy、测试、MSRV与自动修复审阅 |
-| [rust-docs](rust-docs/SKILL.md) | 官方规则/API、精确版本docs.rs、feature和离线查询 |
-| [rust-crates-first](rust-crates-first/SKILL.md) | 新功能先查crates.io；用户明确自写或已有实现足够时例外 |
+## 技能索引
 
-每个技能自带references/sources.md：语言规则、API合约、条件建议与实现细节分开；不将内部unsafe或不稳定API作为日常开发模板。本包为源码及人类文档的原创归纳，无大段上游复制。
+| 技能 | Book范围 | 触发场景 |
+| --- | --- | --- |
+| [rust-foundations](rust-foundations/SKILL.md) | 3、5、6、19 | 基础语法、类型、表达式、结构体、枚举、模式 |
+| [rust-ownership](rust-ownership/SKILL.md) | 4、15、16部分 | 所有权、借用、生命周期、智能指针、共享 |
+| [rust-types](rust-types/SKILL.md) | 10、13、18、20部分 | 泛型、trait、trait object、闭包、函数指针 |
+| [rust-errors](rust-errors/SKILL.md) | 6、9、12 | Option、Result、panic、错误传播、CLI错误 |
+| [rust-collections](rust-collections/SKILL.md) | 8、13 | Vec、String、HashMap、迭代器、容量 |
+| [rust-projects](rust-projects/SKILL.md) | 1、7、14、附录E/G | rustup、模块、Cargo、依赖、features、workspace、发布 |
+| [rust-testing](rust-testing/SKILL.md) | 11、12、附录D | 单元/集成/文档测试、测试组织与回归 |
+| [rust-concurrency](rust-concurrency/SKILL.md) | 16、21 | 线程、channel、共享状态、Send/Sync、关闭清理 |
+| [rust-async](rust-async/SKILL.md) | 17 | async/await、future、task、stream、runtime |
+| [rust-unsafe](rust-unsafe/SKILL.md) | 20、附录D | unsafe、裸指针、FFI、安全不变量、宏 |
+| [rust-quality](rust-quality/SKILL.md) | 附录D、1、11 | rustfmt、Clippy、检查、CI、MSRV证据 |
+| [rust-docs](rust-docs/SKILL.md) | 全书 | Book/Reference/API/Cargo/Clippy文档查询 |
 
-## OpenCode 加载
+每项技能自带`references/sources.md`。正文提炼开发决策，不复制Book章节。版本、edition、MSRV、target和features依具体项目，不默认nightly或升级。
 
-技能发现和技能调用是两个步骤。当前机器全局配置已注册本目录，并通过instructions加载[任务路由规则](skill-loading.md)。其他机器可将各技能目录复制到项目 `.opencode/skills/` 或全局 `~/.config/opencode/skills/`，或在现有配置追加以下路径（保留其他配置和已有instructions）：
+## OpenCode
+
+本机全局配置注册本目录和[技能加载路由](skill-loading.md)。其他机器将12个技能目录复制到`.opencode/skills/`或`~/.config/opencode/skills/`，并在配置中登记目录与路由文件：
 
 ```json
 {
-  "instructions": ["/home/tweaks/skills/rust/skill-loading.md"],
-  "skills": {
-    "paths": ["/home/tweaks/skills/rust"]
-  }
+  "instructions": ["/absolute/path/to/rust/skill-loading.md"],
+  "skills": { "paths": ["/absolute/path/to/rust"] }
 }
 ```
 
-复制部署时需要七个技能目录；若使用路由规则，还需复制skill-loading.md并将instructions改为实际绝对路径。tests/docs不是运行必需。修改加载配置或安装技能后退出并重启OpenCode，再检查技能列表及实际skill调用；仅列出技能不证明已调用。
+改配置或技能后退出并重启OpenCode；确认技能可见后，仍须在每项工作阶段实际调用对应技能。
 
-## 本地检查
+## 检查
 
 在本目录运行：
 
 ```sh
 python3 tests/check.py
-python3 tests/check.py rust-docs rust-cargo
 ```
 
-检查frontmatter、名称、相对链接和章节，并用当前rustc编译/运行四个完整Rust示例。需要Python3及支持edition2021的rustc；这是检查器的要求，不是七项技能的最低工具链要求。所有权scoped示例另需Rust≥1.63。
-
-该检查不是多版本CI，也不执行网络查询、Cargo示例或上游工具链测试。行为测试场景和实际证据见 [tests/scenarios.md](tests/scenarios.md) 与 [tests/results.md](tests/results.md)。未运行的Rust/Cargo版本不宣称支持已验证。
+检查12项技能结构、链接和Rust示例，并用当前`rustc`编译运行示例。它不是Cargo项目集成测试，也不是多版本/MSRV验证。行为场景和实际证据记录见`tests/scenarios.md`与`tests/results.md`。

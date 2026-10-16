@@ -1,75 +1,50 @@
 ---
 name: rust-collections
-description: Use when Rust code needs collection selection, ordered or keyed output, frequency counts, Entry updates, iterator ownership decisions, capacity planning, or investigation of unnecessary allocation and cloning.
+description: Use when Rust work involves Vec, String, HashMap, collection choice, iteration, ownership during traversal, ordering, capacity, or allocation behavior.
 ---
 
-# Rust 集合、迭代与分配
+# Rust 集合与迭代器
 
-## 适用场景
+## 适用
 
-选择容器、统计和排序、调整迭代所有权或减少已确认的分配。先满足顺序、重复、访问和所有权语义，再谈性能；不用实现细节冒充公开保证。
+用于 Book 第8章和第13章。先根据数据关系选容器，再根据所有权和访问方式选择迭代。
 
-## 操作步骤
+## 步骤
 
-1. 核实项目 rustc/cargo、edition、MSRV 和数据来源；不默认 nightly 或新增集合依赖。新方法核对稳定版本，旧版本可用 match、entry 和显式循环。
-2. 确认输出顺序、重复键处理、更新频率、是否仅末尾追加。选下表的标准容器；现有容器加一次排序已满足需求时不强制重写。
-3. 只读用 iter/借用，原地修改用 iter_mut，接管元素用 into_iter；方法接收者决定移动还是借用。数组按值IntoIterator要求Rust≥1.53；edition2015/2018的数组.into_iter()保持借用兼容，按值用IntoIterator::into_iter(array)，借用明确用array.iter()。不同版本/edition不套用Vec规则。
-4. Map更新用 entry 避免查找后再插入；持久存储键决定借用键是否活得足够久。无界流计数明确溢出策略，checked_add返回错误优于默默环绕；已知内存内输入的计数可利用总长度上界。无界流另定义标签基数/字节预算和快照或终止边界；检查整数溢出不解决内存无界。
-5. 容量是预留空间，不是len：核实问的是 Vec 还是 HashMap，再查该类型合约。Vec::with_capacity(n) 至少n，非恰好n；零大小类型例外、增长倍数和分配器行为不能硬编码。未知长度先用new，不从不可信输入无界预分配。
-6. 性能优化先测实际负载与目标构建；比较分配、拷贝、哈希/比较成本。循环和迭代器没有普遍快慢保证。需要可恢复分配失败时按容器查询项目版本的try_reserve等API；Vec的try_reserve不能用于BTreeMap，不假定所有分配都返回Result。
+1. 明确元素数量、键值关系、顺序要求、查找方式和生命周期。
+2. 连续可变序列用`Vec`，UTF-8文本用`String`/`&str`，键值查询用`HashMap`；需要排序或稳定顺序时另选合适容器。
+3. 只读用`iter`，原地修改用`iter_mut`，消费集合用`into_iter`；检查`for`的借用或移动。
+4. 预估容量时用`with_capacity`，不把当前增长策略当公开保证；大流量输入避免无界累积。
+5. 迭代器适配器保持意图清晰；性能结论用目标构建和实际负载测量。
+6. 计数和算术明确溢出策略，不能把release名称当作必然环绕保证。
 
-### 按 Reference 核对循环与整数语义
+下面的计数输入为已存在切片，每项最多计数切片长度，故usize足以容纳；连续累计批次或无界流不具备此前提。
 
-- for将循环表达式经IntoIterator::into_iter转换，再调用Iterator::next；转换表达式求值一次。`for x in values`对Vec按值接管，`&values`借用、`&mut values`独占借用；循环模式影响元素move/copy/ref。迭代协议不是额外分配或更快机器码的保证。
-- 普通整数+/-/*等的溢出检查依构建设置，不承诺“release必环绕”。需要可预期语义用对应checked/wrapping/saturating API并核对版本；有符号MIN除以或取余-1的检查即使关闭overflow-checks仍存在，除零也不能靠关闭检查解决。
-- Reference定义语言可观察行为，不规定优化策略；Vec容量、HashMap顺序等仍是具体标准库API合约。
-
-## 快速选择
-
-| 需求 | 起点 |
-| --- | --- |
-| 顺序追加、栈、连续元素 | Vec |
-| 两端队列 | VecDeque |
-| 按键查询，无顺序要求 | HashMap |
-| 按键升序遍历或范围查询 | BTreeMap |
-| 去重，无值 | HashSet / BTreeSet（按排序需求） |
-| 每次取最高优先级 | BinaryHeap |
-
-HashMap不保证插入顺序；BTreeMap按键Ord遍历，不等于地区语言的自然排序。仅一批数据最终有序也可 Vec排序/聚合。输入已保证全局非递减且只末尾追加时，Vec<(标签,计数)>比较最后一组即可；可逐组输出时只保存当前组，无需Map。外部输入的排序前提需要验证。
-
-## 最小示例
-
-来自已驻留内存的切片，每个标签计数不超过切片len，因此usize递增有上界；无界流需要另用checked_add。
+## 示例
 
 ```rust
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 
-fn counts<'a>(tags: &[&'a str]) -> BTreeMap<&'a str, usize> {
-    let mut result = BTreeMap::new();
-    for &tag in tags {
-        *result.entry(tag).or_insert(0) += 1;
+fn counts<'a>(words: &[&'a str]) -> HashMap<&'a str, usize> {
+    let mut result = HashMap::new();
+    for word in words {
+        *result.entry(*word).or_insert(0) += 1;
     }
     result
 }
 
 fn main() {
-    let result = counts(&["b", "a", "b"]);
-    let ordered: Vec<_> = result.into_iter().collect();
-    assert_eq!(ordered, vec![("a", 1), ("b", 2)]);
-    assert!(counts(&[]).is_empty());
-    let values: Vec<u8> = Vec::with_capacity(10);
-    assert_eq!(values.len(), 0);
-    assert!(values.capacity() >= 10);
+    assert_eq!(counts(&["a", "a"]).get("a"), Some(&2));
 }
 ```
 
-## 常见误区
+## 误区
 
-- 把HashMap容量文档拿来回答Vec，或把观察到的迭代顺序当保证。
-- reserve参数是“额外元素数”，不要与总容量混淆；reserve_exact也不承诺底层分配恰好请求大小。
-- 为collect先clone全部数据，或以“迭代器总快”为由重写可读循环。
-- 更换哈希器、引入小向量或自写unsafe容器而没有性能证据；外部不可信键还需考虑碰撞攻击。
+- `String`是UTF-8字节序列，不是可按整数索引的字符数组。
+- `HashMap`迭代顺序和哈希算法不是跨版本固定输出。
+- `for x in values`可能消费集合，`for x in &values`和`for x in &mut values`表达不同借用。
+- 容量、分配次数和迭代器速度不要从实现细节推断。
 
 ## 来源
 
-[容器合约与源码依据](references/sources.md)。版本/API查询按 rust-docs；不可用时查目标版本标准库文档。
+[Book第8章](https://doc.rust-lang.org/book/ch08-00-common-collections.html)、[第13章](https://doc.rust-lang.org/book/ch13-00-functional-features.html)、[std collections](https://doc.rust-lang.org/std/collections/)、[Iterator](https://doc.rust-lang.org/std/iter/)。
